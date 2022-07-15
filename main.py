@@ -45,22 +45,22 @@ if __name__ == '__main__':
                     try:
                         decoded_data = data.decode('ascii')
                         print('decoded data: "%s"' % decoded_data)
-                    except Exception as e:
-                        print(e)
-                        break
 
-                    try:
-                        group_number, time, fixed_time, channel_ID, member_number = parse_msg(decoded_data)
-                        output_string = "" \
-                                        "Спортсмен, нагрудный номер " + member_number \
-                                        + " прошёл отсечку " + channel_ID \
-                                        + " в " + fixed_time
+                        try:
+                            group_number, time, fixed_time, channel_ID, member_number = parse_msg(decoded_data)
+                            output_string = "" \
+                                            "Спортсмен, нагрудный номер " + member_number \
+                                            + " прошёл отсечку " + channel_ID \
+                                            + " в " + fixed_time
 
-                        print(output_string)
+                            print(output_string)
 
-                        if group_number == "00":
-                            of.write(output_string + "\n")
-                            of.close()
+                            if group_number == "00":
+                                of.write(output_string + "\n")
+                                of.close()
+
+                        except Exception as e:
+                            print(e)
 
                     except Exception as e:
                         print(e)
