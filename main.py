@@ -7,27 +7,24 @@ OUTPUT_FILE_NAME = "output.txt"
 def parse_msg(message):
     strings_chunks = message.split()
 
-    # todo переписать
-    try:
-        group_number = strings_chunks.pop()
+    if len(strings_chunks) != 4:
+        raise ValueError('Invalid amount of arguments. Should be: "BBBB NN HH:MM:SS.zhq GG"')
 
-        time = strings_chunks.pop()
-        time_parts = time.split('.')
-        if len(time_parts) == 2:
-            main_time = time_parts[0]
-            millis = time_parts[1][:1]
-            fixed_time = main_time + "." + millis
-        else:
-            raise ValueError('Incorrect value at millis')
+    member_number = strings_chunks[0]
+    channel_ID = strings_chunks[1]
 
-        channel_ID = strings_chunks.pop()
-        member_number = strings_chunks.pop()
+    time = strings_chunks[2]
+    time_parts = time.split('.')
+    if len(time_parts) != 2:
+        raise ValueError('Incorrect value at millis')
 
-        return group_number, fixed_time, channel_ID, member_number
+    main_time = time_parts[0]
+    millis = time_parts[1][:1]
+    fixed_time = main_time + "." + millis
 
-    except IndexError as ie:
-        print(ie, file=sys.stderr)
-        return
+    group_number = strings_chunks[3]
+
+    return group_number, fixed_time, channel_ID, member_number
 
 
 if __name__ == '__main__':
@@ -50,7 +47,7 @@ if __name__ == '__main__':
 
             while True:
                 try:
-                    data = connection.recv(1024)
+                    data = connection.recv(256)
                 except Exception as e:
                     print(e, file=sys.stderr)
                     break
