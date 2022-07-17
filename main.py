@@ -37,10 +37,10 @@ if __name__ == '__main__':
     args = arg_parser.parse_args()
 
     HOST = args.host
-    PORT = args.port
+    PORT = int(args.port)
     OUTPUT_FILE_NAME = args.logfile
     ENCODING = args.encoding
-    BUFF_SIZE = args.buffer_size
+    BUFF_SIZE = int(args.buffer_size)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (HOST, PORT)
