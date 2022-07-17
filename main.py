@@ -10,19 +10,20 @@ def parse_msg(message):
     # todo переписать
     try:
         group_number = strings_chunks.pop()
+
         time = strings_chunks.pop()
         time_parts = time.split('.')
-
         if len(time_parts) == 2:
             main_time = time_parts[0]
             millis = time_parts[1][:1]
             fixed_time = main_time + "." + millis
         else:
-            fixed_time = time
+            raise ValueError('Incorrect value at millis')
 
         channel_ID = strings_chunks.pop()
         member_number = strings_chunks.pop()
-        return group_number, time, fixed_time, channel_ID, member_number
+
+        return group_number, fixed_time, channel_ID, member_number
 
     except IndexError as ie:
         print(ie, file=sys.stderr)
@@ -61,7 +62,7 @@ if __name__ == '__main__':
                         decoded_data = data.decode('ascii')
                         print('decoded data: "%s"' % decoded_data)
 
-                        group_number, time, fixed_time, channel_ID, member_number = parse_msg(decoded_data)
+                        group_number, fixed_time, channel_ID, member_number = parse_msg(decoded_data)
                         output_string = "Спортсмен, нагрудный номер {} прошёл отсечку {} в {}"\
                             .format(member_number, channel_ID, fixed_time)
 
