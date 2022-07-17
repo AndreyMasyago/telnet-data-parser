@@ -38,11 +38,12 @@ if __name__ == '__main__':
             of = open(output_file, 'a')
 
             while True:
-                data = connection.recv(1025)
+                data = connection.recv(1024)
 
                 print('received "%s"' % data)
                 if data:
                     try:
+                        #TODO: Unknown encoding from client. Add argument.
                         decoded_data = data.decode('ascii')
                         print('decoded data: "%s"' % decoded_data)
 
@@ -68,6 +69,8 @@ if __name__ == '__main__':
                 else:
                     print('no more data from', client_address)
                     break
+        except Exception as e:
+            print(e)
 
         finally:
             of.close()
