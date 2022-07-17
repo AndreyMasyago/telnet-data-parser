@@ -10,7 +10,7 @@ def parse_msg(message):
         raise ValueError('Invalid amount of arguments. Should be: "BBBB NN HH:MM:SS.zhq GG"')
 
     member_number = strings_chunks[0]
-    channel_ID = strings_chunks[1]
+    channel_id = strings_chunks[1]
 
     time = strings_chunks[2]
     time_parts = time.split('.')
@@ -23,7 +23,7 @@ def parse_msg(message):
 
     group_number = strings_chunks[3]
 
-    return group_number, fixed_time, channel_ID, member_number
+    return group_number, fixed_time, channel_id, member_number
 
 
 if __name__ == '__main__':
@@ -64,9 +64,9 @@ if __name__ == '__main__':
                     try:
                         decoded_data = data.decode(ENCODING)
 
-                        group_number, fixed_time, channel_ID, member_number = parse_msg(decoded_data)
+                        group_number, fixed_time, channel_id, member_number = parse_msg(decoded_data)
                         output_string = "Спортсмен, нагрудный номер {} прошёл отсечку {} в {}"\
-                            .format(member_number, channel_ID, fixed_time)
+                            .format(member_number, channel_id, fixed_time)
 
                         of.write(output_string + "\n")
 
