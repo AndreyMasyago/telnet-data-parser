@@ -45,14 +45,11 @@ if __name__ == '__main__':
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (HOST, PORT)
 
-    # print('starting up on %s port %s' % server_address)
     sock.bind(server_address)
     sock.listen()
 
     while True:
-        # print('waiting for a connection')
         connection, client_address = sock.accept()
-        # print('connection from', client_address)
 
         with open(OUTPUT_FILE_NAME, 'a') as of:
 
@@ -63,12 +60,9 @@ if __name__ == '__main__':
                     print(e, file=sys.stderr)
                     break
 
-                # print('received "%s"' % data)
                 if data:
                     try:
-                        # TODO: Unknown encoding from client. Add argument.
                         decoded_data = data.decode(ENCODING)
-                        # print('decoded data: "%s"' % decoded_data)
 
                         group_number, fixed_time, channel_ID, member_number = parse_msg(decoded_data)
                         output_string = "Спортсмен, нагрудный номер {} прошёл отсечку {} в {}"\
@@ -83,11 +77,6 @@ if __name__ == '__main__':
                         print(e, file=sys.stderr)
 
                 else:
-                    # print('no more data from', client_address)
                     break
 
         connection.close()
-
-    test_string = "0002 C1 01:13:02.877 00"
-    test_string2 = "0003 C2 12:24:13.999 01"
-
