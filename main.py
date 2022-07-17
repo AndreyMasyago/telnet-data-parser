@@ -1,20 +1,32 @@
 import socket
+import sys
+
+OUTPUT_FILE_NAME = "output.txt"
 
 
 def parse_msg(message):
     strings_chunks = message.split()
 
+    # todo переписать
     try:
         group_number = strings_chunks.pop()
         time = strings_chunks.pop()
-        fixed_time = time[:-2]
+        time_parts = time.split('.')
+
+        if len(time_parts) == 2:
+            main_time = time_parts[0]
+            millis = time_parts[1][:1]
+            fixed_time = main_time + "." + millis
+        else:
+            fixed_time = time
+
         channel_ID = strings_chunks.pop()
         member_number = strings_chunks.pop()
-    except IndexError as ie:
-        print(ie)
-        return
+        return group_number, time, fixed_time, channel_ID, member_number
 
-    return group_number, time, fixed_time, channel_ID, member_number
+    except IndexError as ie:
+        print(ie, file=sys.stderr)
+        return
 
 
 if __name__ == '__main__':
@@ -31,50 +43,42 @@ if __name__ == '__main__':
     while True:
         print('waiting for a connection')
         connection, client_address = sock.accept()
+        print('connection from', client_address)
 
-        try:
-            print('connection from', client_address)
-            output_file = "output.txt"
-            of = open(output_file, 'a')
+        with open(OUTPUT_FILE_NAME, 'a') as of:
 
             while True:
-                data = connection.recv(1024)
+                try:
+                    data = connection.recv(1024)
+                except Exception as e:
+                    print(e, file=sys.stderr)
+                    break
 
                 print('received "%s"' % data)
                 if data:
                     try:
-                        #TODO: Unknown encoding from client. Add argument.
+                        # TODO: Unknown encoding from client. Add argument.
                         decoded_data = data.decode('ascii')
                         print('decoded data: "%s"' % decoded_data)
 
-                        try:
-                            group_number, time, fixed_time, channel_ID, member_number = parse_msg(decoded_data)
-                            output_string = "" \
-                                            "Спортсмен, нагрудный номер " + member_number \
-                                            + " прошёл отсечку " + channel_ID \
-                                            + " в " + fixed_time
+                        group_number, time, fixed_time, channel_ID, member_number = parse_msg(decoded_data)
+                        output_string = "Спортсмен, нагрудный номер {} прошёл отсечку {} в {}"\
+                            .format(member_number, channel_ID, fixed_time)
 
+                        of.write(output_string + "\n")
+
+                        if group_number == "00":
                             print(output_string)
 
-                            if group_number == "00":
-                                of.write(output_string + "\n")
-                                of.close()
-
-                        except Exception as e:
-                            print(e)
-
                     except Exception as e:
-                        print(e)
+                        print(e, file=sys.stderr)
 
                 else:
                     print('no more data from', client_address)
                     break
-        except Exception as e:
-            print(e)
 
-        finally:
-            of.close()
-            connection.close()
+        connection.close()
 
     test_string = "0002 C1 01:13:02.877 00"
     test_string2 = "0003 C2 12:24:13.999 01"
+
